@@ -74,12 +74,15 @@ const App = () => {
                   element={<ItemPage endpoint="income" />}
                 />
                 <Route path="/settings" element={<Settings />} />
-                {/* <Route path="/pagenotfound" element={<PageNotFound />} />
+                <Route path="/pagenotfound" element={<PageNotFound />} />
                 <Route
                   path="*"
                   element={<Navigate to="/pagenotfound" replace={true} />}
-                /> */}
-                <Route path="*" element={<PageNotFound />} />
+                />
+                <Route
+                  path="/"
+                  element={<Navigate to="/total" replace={true} />}
+                />
               </>
             )}
           </Routes>
