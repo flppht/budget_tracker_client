@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
 import Button from "./Button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../utility/AuthContext";
 import Notify from "./Notify";
 
@@ -98,18 +98,12 @@ const Auth = () => {
             </label>
             <hr className="authHr" />
           </div>
-          {/* <Button
-            type="button"
-            className="bg-gray-400 shadow-gray-500/50 mt-3 mb-2 hover:bg-gray-500/70"
-            onClick={() => setLogin(!login)}
-          > */}
           <div
-            className="text-center font-semibold text-sm mt-3 mb-1 text-slate-600 hover:text-slate-900 cursor-pointer"
+            className="text-center self-center w-fit font-semibold text-sm mt-3 mb-1 text-slate-600 hover:text-slate-900 cursor-pointer"
             onClick={() => setLogin(!login)}
           >
             {login ? "SIGN UP" : "SIGN IN"}
           </div>
-          {/* </Button> */}
         </Form>
       </Formik>
       {showModal && <Notify onClose={handleClose} message={message} />}
