@@ -8,6 +8,7 @@ import sortData from "../utility/SortData";
 import calculateTotalAmount from "../utility/CalculateTotalAmount";
 import DatePicker from "./DatePicker";
 import { useSelector } from "react-redux";
+import SkeletonItems from "./SkeletonItems";
 
 const Expense = () => {
   const [listOfExpenses, setListOfExpenses] = useState([]);
@@ -48,11 +49,11 @@ const Expense = () => {
             setYear={setYear}
           />
         </div>
-        <div className="grid grid-cols-3 w-72">
-          <label className="text-lg mb-2 font-semibold justify-self-start col-span-2">
+        <div className="flex flex-row w-72">
+          <label className="text-lg mb-2 font-semibold w-full">
             Expenses: {calculateTotalAmount(listOfExpenses)} KM
           </label>
-          <div className="justify-self-end font-bold">
+          <div className="w-16">
             <ImportExportIcon
               onClick={() =>
                 setListOfExpenses(sortData(listOfExpenses, sort, setSort))
@@ -65,31 +66,35 @@ const Expense = () => {
           </div>
         </div>
         <div className="container flex flex-col overflow-auto">
-          {listOfExpenses.map((expense, key) => {
-            return (
-              <div className="itemContainer shadow-md" key={key}>
-                <div
-                  className="item flex justify-center"
-                  onClick={() => navigate(`/expenses/${expense.id}`)}
-                >
-                  <div className="titleContainer w-3/5">
-                    <div className="itemDate text-sm font-normal text-gray-500">
-                      {dateExtractor(new Date(expense.createdAt))}
+          {listOfExpenses.length ? (
+            listOfExpenses.map((expense, key) => {
+              return (
+                <div className="itemContainer shadow-md" key={key}>
+                  <div
+                    className="item flex justify-center"
+                    onClick={() => navigate(`/expenses/${expense.id}`)}
+                  >
+                    <div className="titleContainer w-3/5">
+                      <div className="itemDate text-sm font-normal text-gray-500">
+                        {dateExtractor(new Date(expense.createdAt))}
+                      </div>
+                      <div className="font-mono mt-1 font-semibold">
+                        {expense.title}
+                      </div>
+                      <div className="itemLocation text-sm font-normal text-gray-500 italic">
+                        {expense.location}
+                      </div>
                     </div>
-                    <div className="font-mono mt-1 font-semibold">
-                      {expense.title}
+                    <div className="itemValue w-2/5 font-semibold align-bottom text-red-700">
+                      -{expense.value} KM
                     </div>
-                    <div className="itemLocation text-sm font-normal text-gray-500 italic">
-                      {expense.location}
-                    </div>
-                  </div>
-                  <div className="itemValue w-2/5 font-semibold align-bottom text-red-700">
-                    -{expense.value} KM
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <SkeletonItems />
+          )}
         </div>
       </div>
     </div>
