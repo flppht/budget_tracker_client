@@ -1,63 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import dateExtractor from "../utility/DateExtractor";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ImportExportIcon from "@mui/icons-material/ImportExport";
 import sortData from "../utility/SortData";
 import calculateTotalAmount from "../utility/CalculateTotalAmount";
 import DatePicker from "./DatePicker";
-import { useSelector } from "react-redux";
 import SkeletonItems from "./SkeletonItems";
+import { useTransactions } from "../hooks/useTransactions";
+import Notify from "./Notify";
 
 const Income = () => {
-  const [listOfIncome, setListOfIncome] = useState([]);
+  const { income, setIncome, isLoading, error } = useTransactions();
   const [sort, setSort] = useState(false);
-  const [month, setMonth] = useState(new Date().getMonth());
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [showNotification, setShowNotification] = useState(true);
   const navigate = useNavigate();
-  const accessToken = useSelector((state) => state.accessToken.token);
 
-  useEffect(() => {
-    const properties = {
-      month,
-      year,
-    };
-
-    axios
-      .get(`${process.env.REACT_APP_SERVER_URL}/income`, {
-        headers: { accessToken },
-        params: properties,
-      })
-      .then((response) => {
-        setListOfIncome(
-          response.data.sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          )
-        );
-      });
-  }, [month, year]);
+  if (error.length > 0) {
+    return (
+      showNotification && (
+        <Notify onClose={() => setShowNotification(false)} message={error} />
+      )
+    );
+  }
 
   return (
     <div>
       <div className="flex flex-col items-center mt-2">
         <div className="mb-4">
-          <DatePicker
-            month={month}
-            setMonth={setMonth}
-            year={year}
-            setYear={setYear}
-          />
+          <DatePicker />
         </div>
         <div className="flex flex-row w-72">
           <label className="text-lg mb-2 font-semibold w-full">
-            Income: {calculateTotalAmount(listOfIncome)} KM
+            Income: {calculateTotalAmount(income)} KM
           </label>
           <div className="w-16">
             <ImportExportIcon
-              onClick={() =>
-                setListOfIncome(sortData(listOfIncome, sort, setSort))
-              }
+              onClick={() => setIncome(sortData(income, sort, setSort))}
               className="mr-1 text-cyan-600/80 cursor-pointer dark:text-slate-800"
             />
             <Link to="/createincome">
@@ -66,8 +45,10 @@ const Income = () => {
           </div>
         </div>
         <div className="container flex flex-col overflow-auto">
-          {listOfIncome.length ? (
-            listOfIncome.map((income, key) => {
+          {isLoading ? (
+            <SkeletonItems />
+          ) : (
+            income.map((income, key) => {
               return (
                 <div className="itemContainer shadow-md" key={key}>
                   <div
@@ -92,8 +73,6 @@ const Income = () => {
                 </div>
               );
             })
-          ) : (
-            <SkeletonItems />
           )}
         </div>
       </div>
